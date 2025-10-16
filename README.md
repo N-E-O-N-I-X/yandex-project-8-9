@@ -3,9 +3,11 @@
 Стек: HTML, SCSS, TS, Vite
 
 Структура проекта:
+```
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
 - src/components/base/ — папка с базовым кодом
+```
 
 Важные файлы:
 - index.html — HTML-файл главной страницы
@@ -18,26 +20,26 @@
 ## Установка и запуск
 Для установки и запуска проекта необходимо выполнить команды
 
-```
+```bash
 npm install
 npm run start
 ```
 
 или
 
-```
+```bash
 yarn
 yarn start
 ```
 ## Сборка
 
-```
+```bash
 npm run build
 ```
 
 или
 
-```
+```bash
 yarn build
 ```
 # Интернет-магазин «Web-Larёk»
@@ -98,3 +100,156 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+#### Данные
+
+##### Интерфейсы:
+
+- Товар
+```ts
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+}
+```
+
+- Покупатель
+```ts
+interface IBuyer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+}
+```
+
+##### Классы:
+
+- Класс товаров для работы с каталогом
+```ts
+class Products {
+  private items: IProduct[] = [];
+  private selected: IProduct | null = null;
+
+  setItems(items: IProduct[]): void {
+    this.items = items;
+  }
+
+  getItems(): IProduct[] {
+    return this.items;
+  }
+
+  getProductById(id: string): IProduct | undefined {
+    return this.items.find((item) => item.id === id);
+  }
+
+  setSelected(product: IProduct): void {
+    this.selected = product;
+  }
+
+  getSelected(): IProduct | null {
+    return this.selected;
+  }
+}
+```
+
+- Класс для работы с корзиной
+```ts
+class Cart {
+  private items: IProduct[] = [];
+
+  // Добавление товара в корзину
+  addItem(product: IProduct): void {
+    this.items.push(product);
+  }
+
+  // Удаление товара из корзины
+  removeItem(id: string): void {
+    this.items = this.items.filter((item) => item.id !== id);
+  }
+
+  // Очистка корзины
+  clear(): void {
+    this.items = [];
+  }
+
+  // Получение списка всех товаров в корзине
+  getItems(): IProduct[] {
+    return this.items;
+  }
+
+  // Получение общей стоимости товаров в корзине
+  getTotalPrice(): number {
+    return this.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
+  }
+
+  // Получение количества товаров в корзине
+  getItemCount(): number {
+    return this.items.length;
+  }
+
+  // Проверка наличия товара в корзине по ID
+  hasItem(id: string): boolean {
+    return this.items.some((item) => item.id === id);
+  }
+}
+```
+- Класс для работы с покупателем
+```ts
+class Buyer {
+  private payment: TPayment = '';  // Вид оплаты
+  private email = '';  // Email покупателя
+  private phone = '';  // Телефон покупателя
+  private address = '';  // Адрес покупателя
+
+  // Методы для установки данных
+  setPayment(value: TPayment): void {
+    this.payment = value;
+  }
+
+  setEmail(value: string): void {
+    this.email = value;
+  }
+
+  setPhone(value: string): void {
+    this.phone = value;
+  }
+
+  setAddress(value: string): void {
+    this.address = value;
+  }
+
+  // Получение всех данных покупателя
+  getData(): IBuyer {
+    return {
+      payment: this.payment,
+      email: this.email,
+      phone: this.phone,
+      address: this.address,
+    };
+  }
+
+  // Очистка данных покупателя
+  clear(): void {
+    this.payment = '';
+    this.email = '';
+    this.phone = '';
+    this.address = '';
+  }
+
+  // Валидация данных покупателя
+  validate(): Partial<Record<keyof IBuyer, string>> {
+    const errors: Partial<Record<keyof IBuyer, string>> = {};
+
+    if (!this.payment) errors.payment = 'Не выбран вид оплаты';
+    if (!this.email) errors.email = 'Укажите емэйл';
+    if (!this.phone) errors.phone = 'Укажите телефон';
+    if (!this.address) errors.address = 'Укажите адрес';
+
+    return errors;
+  }
+}
+```
