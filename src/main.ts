@@ -45,7 +45,7 @@ console.log(`Наличие товара в корзине по id:`, cart.hasIt
 
 const buyer = new Buyer()
 
-buyer.setData({ payment: "card", address: "Рандомный адрес", phone: "+79999999999", email: "random.pochta@gmail.com"})
+buyer.setData({ payment: "card", address: "Рандомный адрес", phone: "", email: "random.pochta@gmail.com"})
 console.log(`Данные покупателя:`,buyer.getData())
 
 console.log(`Результат валидации:`, buyer.validate())

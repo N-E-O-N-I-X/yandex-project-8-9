@@ -100,9 +100,11 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
-#### Данные
+### Данные
 
-##### Интерфейсы:
+#### Интерфейсы
+
+2 сущности используемые в проекте:
 
 - Товар
 ```ts
@@ -126,130 +128,80 @@ interface IBuyer {
 }
 ```
 
-##### Классы:
+#### Модели
 
-- Класс товаров для работы с каталогом
+##### Products
+
+###### Поля класса:
+- `products: IProduct[] = []` для хранениея массива всех товаров
+- `selectedProduct: IProduct | null = null` для хранения товара для отображения
+
+###### Методы:
+- `setItems(products: IProduct[]): void` для сохранения массива товаров
+- `getItems(): IProduct[]` для получения массивов товаров из модели
+- `getProductById(id: string): IProduct | null` для получения товара по id
+- `setSelected(product: IProduct): void` для сохранения товара
+- `getSelected(): IProduct | null` для получения товара для подробного отображения
+
+
+##### Cart
+
+
+###### Поле класса:
+- `products: IProduct[]` для хранения товаров в корзине у покупателя
+
+###### Методы:
+- `getItems(): IProduct[]` для получения товаров в корзине
+- `addItem(product: IProduct): void` для добавления товара в корзину
+- `removeItem(product: IProduct): void` для удаления товара из корзины
+- `clear(): void` для полной очистки корзины
+- `getTotalPrice(): number` для получения стоимости товаров, находящихся в корзине
+- `getItemCount(): number` для получения количества товаров в корзине
+- `hasItem(productId: string): boolean` для проверки наличия товара в корзине
+
+##### Buyer
+
+###### Поля класса:
+- `payment: TPayment | null`
+- `address: string`
+- `phone: string`
+- `email: string`
+
+###### Методы:
+- `setData(data: Partial<IBuyer>) :void` для сохранения данных в модели
+- `getData(): IBuyer` для получения всех данных покупателя
+- `clear(): void` для очистки данных покупателя
+- `validate(): { isValid: boolean; errors: Record<string, string> }` для валидации поля
+
+##### Communication
+
+###### Методы:
+- `getData(): Promise<ICatalogResult>` выполняет запрос на сервер и возвращает массив товаров
+- `postData(order: IOrder): Promise<IOrderResult>` получает результат заказа (номера товаров, общая сумма заказа)
+
+###### Интерфейсы:
+- для каталога, который получаем с сервера
 ```ts
-class Products {
-  private items: IProduct[] = [];
-  private selected: IProduct | null = null;
-
-  setItems(items: IProduct[]): void {
-    this.items = items;
-  }
-
-  getItems(): IProduct[] {
-    return this.items;
-  }
-
-  getProductById(id: string): IProduct | undefined {
-    return this.items.find((item) => item.id === id);
-  }
-
-  setSelected(product: IProduct): void {
-    this.selected = product;
-  }
-
-  getSelected(): IProduct | null {
-    return this.selected;
-  }
+interface IProductsTotal {
+  total: number;    
+  items: IProduct[];  
 }
 ```
-
-- Класс для работы с корзиной
+- для заказа, в котором содержатся данные, введенные пользователем
 ```ts
-class Cart {
-  private items: IProduct[] = [];
-
-  // Добавление товара в корзину
-  addItem(product: IProduct): void {
-    this.items.push(product);
-  }
-
-  // Удаление товара из корзины
-  removeItem(id: string): void {
-    this.items = this.items.filter((item) => item.id !== id);
-  }
-
-  // Очистка корзины
-  clear(): void {
-    this.items = [];
-  }
-
-  // Получение списка всех товаров в корзине
-  getItems(): IProduct[] {
-    return this.items;
-  }
-
-  // Получение общей стоимости товаров в корзине
-  getTotalPrice(): number {
-    return this.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
-  }
-
-  // Получение количества товаров в корзине
-  getItemCount(): number {
-    return this.items.length;
-  }
-
-  // Проверка наличия товара в корзине по ID
-  hasItem(id: string): boolean {
-    return this.items.some((item) => item.id === id);
-  }
+interface IOrder {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+  total: number;
+  items: string[];   
 }
 ```
-- Класс для работы с покупателем
+- для результата заказа, который возвращает сервер
 ```ts
-class Buyer {
-  private payment: TPayment = '';  // Вид оплаты
-  private email = '';  // Email покупателя
-  private phone = '';  // Телефон покупателя
-  private address = '';  // Адрес покупателя
-
-  // Методы для установки данных
-  setPayment(value: TPayment): void {
-    this.payment = value;
-  }
-
-  setEmail(value: string): void {
-    this.email = value;
-  }
-
-  setPhone(value: string): void {
-    this.phone = value;
-  }
-
-  setAddress(value: string): void {
-    this.address = value;
-  }
-
-  // Получение всех данных покупателя
-  getData(): IBuyer {
-    return {
-      payment: this.payment,
-      email: this.email,
-      phone: this.phone,
-      address: this.address,
-    };
-  }
-
-  // Очистка данных покупателя
-  clear(): void {
-    this.payment = '';
-    this.email = '';
-    this.phone = '';
-    this.address = '';
-  }
-
-  // Валидация данных покупателя
-  validate(): Partial<Record<keyof IBuyer, string>> {
-    const errors: Partial<Record<keyof IBuyer, string>> = {};
-
-    if (!this.payment) errors.payment = 'Не выбран вид оплаты';
-    if (!this.email) errors.email = 'Укажите емэйл';
-    if (!this.phone) errors.phone = 'Укажите телефон';
-    if (!this.address) errors.address = 'Укажите адрес';
-
-    return errors;
-  }
+interface IOrderResult {
+  id: string;
+  total: number, 
 }
 ```
