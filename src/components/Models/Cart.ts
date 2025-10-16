@@ -1,7 +1,7 @@
 import { IProduct } from '../../types';
 
 export class Cart {
-  private items: IProduct[] = [];
+  items: IProduct[] = [];
 
   // Добавление товара в корзину
   addItem(product: IProduct): void {
@@ -10,7 +10,10 @@ export class Cart {
 
   // Удаление товара из корзины
   removeItem(id: string): void {
-    this.items = this.items.filter((item) => item.id !== id);
+     const index = this.items.findIndex(item => item.id === item.id);
+    if (index !== -1) {
+      this.items.splice(index, 1);
+    }
   }
 
   // Очистка корзины

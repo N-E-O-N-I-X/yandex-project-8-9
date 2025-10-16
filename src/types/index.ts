@@ -16,9 +16,28 @@ export interface IProduct {
   price: number | null;
 }
 
+export interface IProductsTotal {
+  total: number;    
+  items: IProduct[];  
+}
+
 export interface IBuyer {
   payment: TPayment;
   email: string;
   phone: string;
   address: string;
+}
+
+export interface IOrder {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+  total: number;
+  items: string[];   
+}
+
+export interface IOrderResult {
+  id: string;
+  total: number, 
 }

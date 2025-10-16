@@ -7,20 +7,18 @@ export class Buyer {
   private address = '';  // Адрес покупателя
 
   // Методы для установки данных
-  setPayment(value: TPayment): void {
-    this.payment = value;
-  }
+  setData(data: Partial<IBuyer>) :void {
+    if (data.payment !== undefined) 
+      this.payment = data.payment;
 
-  setEmail(value: string): void {
-    this.email = value;
-  }
+    if (data.address !== undefined) 
+      this.address = data.address;
 
-  setPhone(value: string): void {
-    this.phone = value;
-  }
+    if (data.phone !== undefined) 
+      this.phone = data.phone;
 
-  setAddress(value: string): void {
-    this.address = value;
+    if (data.email !== undefined) 
+      this.email = data.email;
   }
 
   // Получение всех данных покупателя
@@ -42,14 +40,28 @@ export class Buyer {
   }
 
   // Валидация данных покупателя
-  validate(): Partial<Record<keyof IBuyer, string>> {
-    const errors: Partial<Record<keyof IBuyer, string>> = {};
+  validate(): { isValid: boolean; errors: Record<string, string> }{
+    const errors: Record<string, string> = {};
 
-    if (!this.payment) errors.payment = 'Не выбран вид оплаты';
-    if (!this.email) errors.email = 'Укажите емэйл';
-    if (!this.phone) errors.phone = 'Укажите телефон';
-    if (!this.address) errors.address = 'Укажите адрес';
+    if (!this.payment) {
+      errors.payment = 'Выберите тип оплаты';
+    }
 
-    return errors;
+    if (!this.email) {
+      errors.email = 'Укажите адрес эл.почты';
+    }
+
+    if (!this.phone) {
+      errors.phone = 'Укажите номер телефона';
+    }
+
+    if (!this.address) {
+      errors.address = 'Укажите ваш адрес';
+    }
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors
+    };
   }
 }
