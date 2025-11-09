@@ -1,6 +1,5 @@
 import { Api } from "../base/Api";
 import { IOrder, IProduct, IProductsTotal, IOrderResult } from "../../types";
-import { categoryMap } from "../../utils/constants";
 
 export class AppApi extends Api {
   readonly cdn: string;
@@ -14,8 +13,7 @@ export class AppApi extends Api {
     return this.get<IProductsTotal>("/product/").then((data) => {
       return data.items.map((item) => ({
         ...item,
-        image: `${this.cdn}+${item.image}`,
-        category: categoryMap[item.category],
+        image: `${this.cdn}/${item.image.replace('.svg', '.png')}`,
       }));
     });
   }

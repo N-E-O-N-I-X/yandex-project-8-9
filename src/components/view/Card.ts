@@ -2,6 +2,7 @@ import { Component } from '../base/Component';
 import { IEvents } from '../base/Events';
 import { ensureElement } from '../../utils/utils';
 import { IProduct } from '../../types';
+import { categoryMap } from '../../utils/constants';
 
 interface ICard extends IProduct {
 	buttonText: string;
@@ -35,4 +36,22 @@ export class Card extends Component<ICard> {
 	protected set price(value: number | null) {
 	 this.setText(this.cardPrice, value === null ? `Бессцено` : `${value} синапсов`);
  };
+
+  protected set image(value: string) {
+    this.setImage(this.imageCard, value);
+  }
+
+  protected set category(value: string) {
+    // Текст категории (как есть)
+    this.setText(this.categoryCard, value);
+
+    // Очистка старых классов
+    this.categoryCard.className = 'card__category';
+
+    // Присваивание класса по мапе
+    const categoryClass = categoryMap[value];
+    if (categoryClass) {
+      this.categoryCard.classList.add(categoryClass);
+    }
+  }
 }

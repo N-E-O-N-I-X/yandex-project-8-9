@@ -29,4 +29,4 @@ api.fillCatalog().then((items: IProduct[]) => {
   });
 
   gallery.render({ catalogCard: cards });
-});
+}); 

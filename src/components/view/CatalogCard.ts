@@ -12,14 +12,4 @@ export class CardCatalog extends Card {
 			}
 		});
 	}
-
-	render(data: any): HTMLElement {
-    this.id = data.id;
-    (this as any).title = data.title;
-    (this as any).price = data.price;
-    (this as any).image = data.image;
-    (this as any).category = data.category;
-
-    return this.container;
-  }
 }
