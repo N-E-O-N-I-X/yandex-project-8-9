@@ -1,8 +1,6 @@
-// components/view/Basket.ts
-
-import { Component } from '../base/Component';
-import { IEvents } from '../base/Events';
-import { ensureElement } from '../../utils/utils';
+import { Component } from "../base/Component";
+import { IEvents } from "../base/Events";
+import { ensureElement } from "../../utils/utils";
 
 interface IBasketView {
   renderItemList: HTMLElement[];
@@ -19,12 +17,15 @@ export class Basket extends Component<IBasketView> {
     super(container);
     this.events = events;
 
-    this.itemList = ensureElement<HTMLElement>('.basket__list', container);
-    this.total = ensureElement<HTMLElement>('.basket__price', container);
-    this.button = ensureElement<HTMLButtonElement>('.basket__button', container);
+    this.itemList = ensureElement<HTMLElement>(".basket__list", container);
+    this.total = ensureElement<HTMLElement>(".basket__price", container);
+    this.button = ensureElement<HTMLButtonElement>(
+      ".basket__button",
+      container
+    );
 
-    this.button.addEventListener('click', () => {
-      this.events.emit('basket-submit:next');
+    this.button.addEventListener("click", () => {
+      this.events.emit("basket-submit:next");
     });
   }
 
@@ -37,7 +38,7 @@ export class Basket extends Component<IBasketView> {
   }
 
   clear() {
-    this.itemList.innerHTML = '';
+    this.itemList.innerHTML = "";
   }
 
   updateButtonState(count: number) {

@@ -13,8 +13,8 @@ export class FormContacts extends Component<IFormContacts> {
 	protected button: HTMLButtonElement;
 	protected errorSpan: HTMLSpanElement;
 
-	public emailValue = '';  // Сделано публичным
-  public phoneValue = '';  // Сделано публичным
+	public emailValue = '';
+  public phoneValue = '';
 
 	constructor(container: HTMLFormElement, protected events: IEvents) {
 		super(container);

@@ -1,7 +1,6 @@
-import { Card } from './Card';
-import { IEvents } from '../base/Events';
-import { ensureElement } from '../../utils/utils';
-
+import { Card } from "./Card";
+import { IEvents } from "../base/Events";
+import { ensureElement } from "../../utils/utils";
 
 export class CardModal extends Card {
   protected descriptionCard: HTMLElement;
@@ -10,11 +9,14 @@ export class CardModal extends Card {
   constructor(container: HTMLElement, events: IEvents) {
     super(container, events);
 
-    this.descriptionCard = ensureElement<HTMLElement>('.card__text', container);
-    this.buyCardButton = ensureElement<HTMLButtonElement>('.card__button', container);
+    this.descriptionCard = ensureElement<HTMLElement>(".card__text", container);
+    this.buyCardButton = ensureElement<HTMLButtonElement>(
+      ".card__button",
+      container
+    );
 
-    this.buyCardButton.addEventListener('click', () => {
-      this.events.emit('modal:buy', { id: this.id });
+    this.buyCardButton.addEventListener("click", () => {
+      this.events.emit("modal:buy", { id: this.id });
     });
   }
 
