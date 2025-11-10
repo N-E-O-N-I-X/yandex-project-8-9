@@ -176,10 +176,6 @@ events.on('form-contacts:send-order', () => {
    });
 
   const validation = buyer.validate();
-
-  console.log('Buyer data:', userData);  // Логируем данные покупателя
-  console.log('Validation result:', validation); // Логируем результаты валидации
-
   formContacts.setValid(validation.isValid);
     if (!validation.isValid) {
         formContacts.setErrors(Object.values(validation.errors)); // свой отдельный метод
@@ -191,8 +187,6 @@ events.on('form-contacts:send-order', () => {
     total: cart.getTotalPrice(),
     items: cart.getItems().map((item) => item.id),
   };
-  
-  console.log('Order data:', order); // Логируем заказ, который отправляем
 
   api.sendOrder(order)
     .then((result) => {

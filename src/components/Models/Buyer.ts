@@ -9,8 +9,6 @@ export class Buyer {
   // Методы для установки данных
   setData(data: Partial<IBuyer>) :void {
     
-    console.log('Setting data:', data);  // Логируем данные перед установко
-    
     if (data.payment !== undefined) 
       this.payment = data.payment;
 

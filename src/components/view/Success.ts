@@ -27,7 +27,6 @@ export class Success extends Component<ISuccess> {
 	}
 
   render(data: ISuccess): HTMLElement {
-    console.log('Success data:', data); // Логируем полученные данные
     this.totalPrice = data.totalPrice;
     return this.container;
 }

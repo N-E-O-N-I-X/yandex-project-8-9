@@ -146,7 +146,6 @@ interface IBuyer {
 
 ##### Cart
 
-
 ###### Поле класса:
 - `products: IProduct[]` для хранения товаров в корзине у покупателя
 
@@ -205,3 +204,161 @@ interface IOrderResult {
   total: number, 
 }
 ```
+
+#### Раздел View
+
+##### Класс Modal
+
+###### Поля класса:
+
+- `container: HTMLElement` — корневой элемент модального окна.
+- `closeButton: HTMLButtonElement` — кнопка для закрытия модального окна.
+- `content: HTMLElement` — элемент, содержащий контент, который отображается в модальном окне.
+- `events: IEvents` — объект событий, который используется для взаимодействия с другими частями приложения.
+
+###### Методы:
+
+- `open(): void` — открывает модальное окно, добавляя класс modal_active на контейнер.
+- `close(): void` — закрывает модальное окно, удаляя класс modal_active.
+- `render(data: { content: HTMLElement }): void` — заменяет содержимое модального окна на переданный элемент.
+
+
+##### Класс Success
+
+###### Поля класса:
+
+- `description: HTMLParagraphElement` — элемент для отображения текста с суммой, списанной с покупателя.
+- `button: HTMLButtonElement` — кнопка для закрытия окна и перехода к новым покупкам.
+
+###### Методы:
+
+- `set totalPrice(value: number): void` — устанавливает сумму, списанную с покупателя, в описание.
+- `render(data: ISuccess): HTMLElement` — рендерит окно с успешным сообщением и списанной суммой.
+
+###### Интерфейс ISuccess:
+```ts
+interface ISuccess {
+  totalPrice: number;
+}
+```
+
+
+##### Класс FormOrder
+
+###### Поля класса:
+
+- `cash: HTMLButtonElement` — кнопка для выбора способа оплаты "При получении".
+- `card: HTMLButtonElement` — кнопка для выбора способа оплаты "Онлайн".
+- `address: HTMLInputElement` — поле ввода для адреса доставки.
+- `button: HTMLButtonElement` — кнопка для отправки формы.
+- `errorSpan: HTMLSpanElement` — элемент для отображения ошибок.
+
+###### Методы:
+
+- `emitChange(field: keyof IFormOrder, value: string): void` — эмиттирует событие изменения поля формы.
+- `updateButtonState(): void` — обновляет состояние кнопки (активно/неактивно), в зависимости от валидации.
+- `togglePaymentButtons(): void` — переключает состояния кнопок выбора способа оплаты.
+- `clearPayment(): void` — сбрасывает состояние выбора способа оплаты.
+- `reset(): void` — очищает поля формы и сбрасывает данные.
+
+###### Интерфейс IFormOrder:
+```ts
+interface IFormOrder {
+  payment: 'card' | 'cash' | '';
+  address: string;
+}
+```
+
+
+##### Класс FormContacts
+
+###### Поля класса:
+
+- `email: HTMLInputElement` — поле для ввода email покупателя.
+- `phone: HTMLInputElement` — поле для ввода номера телефона покупателя.
+- `button: HTMLButtonElement` — кнопка для отправки формы.
+- `errorSpan: HTMLSpanElement` — элемент для отображения ошибок.
+
+###### Методы:
+
+- `emitChange(field: keyof IFormContacts, value: string): void` — эмиттирует событие изменения поля формы.
+- `updateButtonState(): void` — обновляет состояние кнопки формы (активно/неактивно), в зависимости от валидации.
+- `setValid(isValid: boolean): void` — устанавливает состояние формы как валидную или нет.
+- `setErrors(errors: string[]): void` — отображает ошибки валидации.
+- `reset(): void` — очищает поля формы и сбрасывает данные.
+
+###### Интерфейс IFormContacts:
+```ts
+interface IFormContacts {
+  email: string;
+  phone: string;
+}
+```
+
+
+##### Класс Gallery
+
+###### Поля класса:
+
+`container: HTMLElement` — контейнер для отображения галереи товаров.
+
+###### Методы:
+
+`render(data: { catalogCard: HTMLElement[] }): void` — рендерит все карточки товаров в галерее.
+
+
+##### Класс CardCatalog
+
+###### Поля класса:
+
+`container: HTMLElement` — корневой элемент для карточки товара.
+
+###### Методы:
+
+`render(data: IProduct): HTMLElement` — рендерит карточку товара, заполняя все поля данными.
+
+
+##### Класс CardModal
+
+###### Поля класса:
+
+`container: HTMLElement` — корневой элемент для модального окна с подробной информацией о товаре.
+
+###### Методы:
+
+`render(data: IProduct): HTMLElement` — рендерит карточку товара в модальном окне.
+
+
+##### Класс CardBasket
+
+###### Поля класса:
+
+`container: HTMLElement` — корневой элемент для карточки товара в корзине.
+
+###### Методы:
+
+`render(data: IProduct): HTMLElement` — рендерит карточку товара в корзине, с кнопкой удаления.
+
+
+##### Класс Basket
+
+###### Поля класса:
+
+`container: HTMLElement` — контейнер для отображения содержимого корзины.
+
+###### Методы:
+
+- `render(data: { renderItemList: HTMLElement[], totalPrice: number }): void` — рендерит список товаров в корзине и отображает общую сумму.
+- `clear(): void` — очищает корзину.
+- `updateButtonState(count: number): void` — обновляет состояние кнопки в корзине (показывает количество товаров).
+
+
+##### Класс Header
+
+###### Поля класса:
+
+`container: HTMLElement` — контейнер для отображения шапки сайта.
+
+###### Методы:
+
+`render(data: { counter: number }): void` — отображает количество товаров в корзине.
