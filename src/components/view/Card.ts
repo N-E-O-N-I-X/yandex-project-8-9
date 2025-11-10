@@ -19,15 +19,27 @@ export class Card extends Component<ICard> {
 	protected imageCard: HTMLImageElement;
 
 	constructor(container: HTMLElement, events: IEvents) {
-		super(container);
-		this.events = events;
+	super(container);
+	this.events = events;
 
-    this.categoryCard = ensureElement<HTMLElement>('.card__category', container);
-    this.imageCard = ensureElement<HTMLImageElement>('.card__image', container);
-		this.cardTitle = ensureElement<HTMLElement>('.card__title', container);
-		this.cardPrice = ensureElement<HTMLElement>('.card__price', container);
+	// Заголовок и цена есть везде
+	this.cardTitle = ensureElement<HTMLElement>('.card__title', container);
+	this.cardPrice = ensureElement<HTMLElement>('.card__price', container);
 
-	};
+	// Эти элементы есть не во всех шаблонах → защищаем try/catch
+	try {
+		this.categoryCard = ensureElement<HTMLElement>('.card__category', container);
+	} catch {
+		this.categoryCard = null as unknown as HTMLElement;
+	}
+
+	try {
+		this.imageCard = ensureElement<HTMLImageElement>('.card__image', container);
+	} catch {
+		this.imageCard = null as unknown as HTMLImageElement;
+	}
+}
+
 
 	protected set title(value: string) {
 		this.setText(this.cardTitle, value);
@@ -37,21 +49,19 @@ export class Card extends Component<ICard> {
 	 this.setText(this.cardPrice, value === null ? `Бессцено` : `${value} синапсов`);
  };
 
-  protected set image(value: string) {
-    this.setImage(this.imageCard, value);
-  }
-
   protected set category(value: string) {
-    // Текст категории (как есть)
-    this.setText(this.categoryCard, value);
+	if (!this.categoryCard) return;
+	this.categoryCard.className = 'card__category';
+	const categoryClass = categoryMap[value];
+	if (categoryClass) {
+		this.categoryCard.classList.add(categoryClass);
+		this.setText(this.categoryCard, value);
+	}
+}
 
-    // Очистка старых классов
-    this.categoryCard.className = 'card__category';
+protected set image(value: string) {
+	if (!this.imageCard) return;
+	this.setImage(this.imageCard, value);
+}
 
-    // Присваивание класса по мапе
-    const categoryClass = categoryMap[value];
-    if (categoryClass) {
-      this.categoryCard.classList.add(categoryClass);
-    }
-  }
 }
