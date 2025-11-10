@@ -53,6 +53,7 @@ const basket = new Basket(cloneTemplate(basketTemplate), events);
 const header = new Header(headerContainer, events);
 const formOrder = new FormOrder(cloneTemplate(formOrderTemplate), events);
 const formContacts = new FormContacts(cloneTemplate(formContactsTemplate), events);
+const success = new Success(cloneTemplate(successTemplate), events);
 
 
 
@@ -182,10 +183,10 @@ events.on('form-contacts:send-order', () => {
 
   api.sendOrder(order)
     .then((result) => {
-      const success = new Success(cloneTemplate(successTemplate), events);
       const element = success.render({ totalPrice: result.total });
-
       modal.render({ content: element });
+      modal.open();
+
       cart.clear();
       buyer.clear();
       formContacts.reset();
