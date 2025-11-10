@@ -11,6 +11,12 @@ import { CardModal } from './components/view/CardModal';import { Basket } from '
 import { CardBasket } from './components/view/CardBasket';
 import { Cart } from './components/Models/Cart';
 import { Header } from './components/view/Header';
+import { Buyer } from './components/Models/Buyer';
+import { FormOrder } from './components/view/FormOrder';
+import { FormContacts } from './components/view/FormContacts';
+import { Success } from './components/view/Success';
+
+
 
 
 // DOM
@@ -21,6 +27,9 @@ const modalContainer = ensureElement<HTMLElement>('#modal-container');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 const headerContainer = ensureElement<HTMLElement>('.header');
+const formOrderTemplate = ensureElement<HTMLTemplateElement>('#order');
+const formContactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
 
 // Events
@@ -33,6 +42,7 @@ const api = new AppApi(CDN_URL, API_URL);
 
 // Models
 const cart = new Cart();
+const buyer = new Buyer();
 
 
 // UI
@@ -41,6 +51,9 @@ const modal = new Modal(modalContainer, events);
 const cardModal = new CardModal(cloneTemplate(cardPreviewTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const header = new Header(headerContainer, events);
+const formOrder = new FormOrder(cloneTemplate(formOrderTemplate), events);
+const formContacts = new FormContacts(cloneTemplate(formContactsTemplate), events);
+
 
 
 // State
@@ -135,16 +148,55 @@ totalPrice: cart.getTotalPrice(),
 
 basket.updateButtonState(cart.getItemCount());
 
-    const count = cart.getItemCount();
-	header.render({ counter: count });
+const count = cart.getItemCount();
+header.render({ counter: count });
 });
 
 
 // Submit basket
 events.on('basket-submit:next', () => {
-console.log('Оформление заказа, покажи форму заказа тут.');
-// Пока нет формы, можно оставить как есть или заглушку
+  const form = formOrder.render();
+  modal.render({ content: form });
 });
+
+events.on('form-order:next', () => {
+  const form = formContacts.render();
+  modal.render({ content: form });
+});
+
+events.on('form-contacts:send-order', () => {
+  const userData = buyer.getData();
+  const validation = buyer.validate();
+
+  formContacts.setValid(validation.isValid);
+    if (!validation.isValid) {
+        formContacts.setErrors(Object.values(validation.errors)); // свой отдельный метод
+        return;
+    }
+
+  const order = {
+    ...userData,
+    total: cart.getTotalPrice(),
+    items: cart.getItems().map((item) => item.id),
+  };
+
+  api.sendOrder(order)
+    .then((result) => {
+      const success = new Success(cloneTemplate(successTemplate), events);
+      const element = success.render({ totalPrice: result.total });
+
+      modal.render({ content: element });
+      cart.clear();
+      buyer.clear();
+      formContacts.reset();
+      formOrder.clearPayment();
+      formOrder.reset();
+
+      events.emit('basket:updated');
+    })
+    .catch(console.error);
+});
+
 
 // Блокировка прокрутки при открытии/закрытии модалки
 events.on('modal:open', () => {
@@ -153,4 +205,8 @@ events.on('modal:open', () => {
 
 events.on('modal:close', () => {
 	header.locked = false;
+});
+
+events.on('success:close', () => {
+  modal.close();
 });
