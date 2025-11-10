@@ -26,10 +26,11 @@ export class Success extends Component<ISuccess> {
 		this.setText(this.description, `Списано ${value} синапсов`);
 	}
 
-  public render(data: ISuccess): HTMLElement {
-		this.totalPrice = data.totalPrice;
-		return this.container;
-	}
+  render(data: ISuccess): HTMLElement {
+    console.log('Success data:', data); // Логируем полученные данные
+    this.totalPrice = data.totalPrice;
+    return this.container;
+}
 
 
 }

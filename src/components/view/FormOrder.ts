@@ -14,8 +14,8 @@ export class FormOrder extends Component<IFormOrder> {
 	protected button: HTMLButtonElement;
 	protected errorSpan: HTMLSpanElement;
 
-	private payment: 'card' | 'cash' | '' = '';
-	private addressValue = '';
+	public payment: 'card' | 'cash' | '' = '';
+	public addressValue = '';
 
 	constructor(container: HTMLFormElement, protected events: IEvents) {
 		super(container);

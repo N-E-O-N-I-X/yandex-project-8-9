@@ -167,7 +167,18 @@ events.on('form-order:next', () => {
 
 events.on('form-contacts:send-order', () => {
   const userData = buyer.getData();
+
+     buyer.setData({
+       email: formContacts.emailValue,
+       phone: formContacts.phoneValue,
+       address: formOrder.addressValue,
+       payment: formOrder.payment
+   });
+
   const validation = buyer.validate();
+
+  console.log('Buyer data:', userData);  // Логируем данные покупателя
+  console.log('Validation result:', validation); // Логируем результаты валидации
 
   formContacts.setValid(validation.isValid);
     if (!validation.isValid) {
@@ -180,6 +191,8 @@ events.on('form-contacts:send-order', () => {
     total: cart.getTotalPrice(),
     items: cart.getItems().map((item) => item.id),
   };
+  
+  console.log('Order data:', order); // Логируем заказ, который отправляем
 
   api.sendOrder(order)
     .then((result) => {

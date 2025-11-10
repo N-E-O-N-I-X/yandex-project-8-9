@@ -13,8 +13,8 @@ export class FormContacts extends Component<IFormContacts> {
 	protected button: HTMLButtonElement;
 	protected errorSpan: HTMLSpanElement;
 
-	private emailValue = '';
-	private phoneValue = '';
+	public emailValue = '';  // Сделано публичным
+  public phoneValue = '';  // Сделано публичным
 
 	constructor(container: HTMLFormElement, protected events: IEvents) {
 		super(container);
@@ -35,8 +35,16 @@ export class FormContacts extends Component<IFormContacts> {
 			this.emitChange('phone', this.phoneValue);
 			this.updateButtonState();
 		});
+
+		this.button.addEventListener('click', (e) => {
+			e.preventDefault();  // Останавливаем перезагрузку формы
+			this.events.emit('form-contacts:send-order');  // Эмитим событие на отправку
+		});
+
 	}
 
+
+	
 	protected emitChange(field: keyof IFormContacts, value: string) {
 		const formName = (this.container as HTMLFormElement).name;
 		this.events.emit(`${formName}.${field}:change`, {

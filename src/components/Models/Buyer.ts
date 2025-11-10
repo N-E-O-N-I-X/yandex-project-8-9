@@ -8,6 +8,9 @@ export class Buyer {
 
   // Методы для установки данных
   setData(data: Partial<IBuyer>) :void {
+    
+    console.log('Setting data:', data);  // Логируем данные перед установко
+    
     if (data.payment !== undefined) 
       this.payment = data.payment;
 
@@ -40,28 +43,37 @@ export class Buyer {
   }
 
   // Валидация данных покупателя
-  validate(): { isValid: boolean; errors: Record<string, string> }{
+ validate(): { isValid: boolean; errors: Record<string, string> } {
     const errors: Record<string, string> = {};
 
+    // Проверка типа оплаты
     if (!this.payment) {
       errors.payment = 'Выберите тип оплаты';
     }
 
+    // Проверка email
     if (!this.email) {
       errors.email = 'Укажите адрес эл.почты';
+    } else if (!/\S+@\S+\.\S+/.test(this.email)) {
+      errors.email = 'Неверный формат email';
     }
 
+    // Проверка телефона
     if (!this.phone) {
       errors.phone = 'Укажите номер телефона';
+    } else if (!/^\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/.test(this.phone)) {
+      errors.phone = 'Неверный формат телефона';
     }
 
+    // Проверка адреса
     if (!this.address) {
       errors.address = 'Укажите ваш адрес';
     }
 
     return {
-      isValid: Object.keys(errors).length === 0,
+      isValid: Object.keys(errors).length === 0,  // Если ошибок нет, форма валидна
       errors
     };
-  }
+}
+
 }
