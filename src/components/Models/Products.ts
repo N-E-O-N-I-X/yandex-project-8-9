@@ -1,26 +1,29 @@
-import { IProduct } from "../../types"
+import { IProduct } from '../../types';
+import { IEvents } from '../base/Events';
 
-export class Products{
-    products: IProduct[] = [];
-    selectedProduct: IProduct | null = null;
+interface IProductsModel {
+	setProducts(products: IProduct[]): void;
+	getProductById(id: string): IProduct | undefined;
+	getCatalog(): IProduct[];
+}
 
-    setItems(products: IProduct[]): void {
-        this.products = products;
-    }
+export class ProductsModel implements IProductsModel { //interface
+	protected products: IProduct[];
 
-    getItems(): IProduct[] {
-        return this.products;
-    }
+	constructor(protected events: IEvents) {
+		this.events = events;
+	}
 
-    getProductById(id: string): IProduct | null {
-        return this.products.find(product => product.id === id) || null;
-    }
+	setProducts(products: IProduct[]) {
+		this.products = products
+		this.events.emit('products:changed')
+	}
 
-    setSelected(product: IProduct): void {
-        this.selectedProduct = product;
-    }
+	getProductById(id: string): IProduct | undefined {
+		return this.products.find((item) => item.id === id);
+	}
 
-    getSelected(): IProduct | null {
-        return this.selectedProduct;
-    }
+	getCatalog() {
+		return this.products;
+	}
 }

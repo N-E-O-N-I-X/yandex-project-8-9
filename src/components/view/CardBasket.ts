@@ -1,29 +1,24 @@
-import { Card } from "./Card";
-import { IEvents } from "../base/Events";
-import { ensureElement } from "../../utils/utils";
+import { Card } from './Card';
+import { IEvents } from '../base/Events';
+import { ensureElement } from '../../utils/utils';
 
-export class CardBasket extends Card {
-  protected indexCard: HTMLElement;
-  protected deleteButton: HTMLButtonElement;
+export class CardBasket extends Card  {
 
-  constructor(container: HTMLElement, events: IEvents) {
-    super(container, events);
+	protected indexCard: HTMLElement;
+	protected deleteButton: HTMLButtonElement;
 
-    this.indexCard = ensureElement<HTMLElement>(
-      ".basket__item-index",
-      container
-    );
-    this.deleteButton = ensureElement<HTMLButtonElement>(
-      ".basket__item-delete",
-      container
-    );
+	constructor(container: HTMLElement, events: IEvents) {
+		super(container, events);
 
-    this.deleteButton.addEventListener("click", () => {
-      this.events.emit("basket-card:delete", { id: this.id });
-    });
-  }
+		this.indexCard = ensureElement<HTMLElement>('.basket__item-index', container)
+		this.deleteButton = ensureElement<HTMLButtonElement>('.basket__item-delete', container);
 
-  protected set index(value: number) {
-    this.setText(this.indexCard, String(value));
-  }
+		this.deleteButton.addEventListener('click', () => {
+			this.events.emit('basket-card:delete',  { id: this.id });
+		})
+	}
+
+	protected set index(value: number) {
+		this.setText(this.indexCard, value);
+	};
 }

@@ -1,39 +1,29 @@
-import { ensureElement } from "../../utils/utils";
-import { IEvents } from "../base/Events";
-import { Component } from "../base/Component";
+import { ensureElement } from '../../utils/utils';
+import { IEvents } from '../base/Events';
+import { Component } from '../base/Component';
 
 interface ISuccess {
-  totalPrice: number;
+	totalPrice: number;
 }
 
-export class Success extends Component<ISuccess> {
-  protected description: HTMLParagraphElement;
-  protected button: HTMLButtonElement;
+export  class Success extends Component<ISuccess>{
 
-  constructor(container: HTMLElement, protected events: IEvents) {
-    super(container);
+	protected description: HTMLParagraphElement;
+	protected button: HTMLButtonElement;
 
-    this.description = ensureElement<HTMLParagraphElement>(
-      ".order-success__description",
-      container
-    );
-    this.button = ensureElement<HTMLButtonElement>(
-      ".order-success__close",
-      container
-    );
+	constructor(container: HTMLElement, protected events: IEvents) {
+		super(container);
 
-    this.button.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.events.emit("success:close");
-    });
-  }
+		this.description = ensureElement<HTMLParagraphElement>('.order-success__description', container)
+		this.button = ensureElement<HTMLButtonElement>('.order-success__close', container)
 
-  protected set totalPrice(value: number) {
-    this.setText(this.description, `Списано ${value} синапсов`);
-  }
+		this.button.addEventListener('click', (e) => {
+			e.preventDefault();
+			this.events.emit('success:close');
+		})
+	};
 
-  render(data: ISuccess): HTMLElement {
-    this.totalPrice = data.totalPrice;
-    return this.container;
-  }
+	protected set totalPrice(value: number) {
+		this.setText(this.description, `Списано ${value} синапсов`);
+	};
 }

@@ -1,24 +1,33 @@
-import { Api } from "../base/Api";
-import { IOrder, IProduct, IProductsTotal, IOrderResult } from "../../types";
+import { Api } from '../base/Api';
+import { IOrder, IProduct, IProductsData } from '../../types';
 
-export class AppApi extends Api {
-  readonly cdn: string;
+interface IOrderResult {
+	id: string;
+	total: number;
+}
 
-  constructor(cdn: string, baseUrl: string, options?: RequestInit) {
-    super(baseUrl, options);
-    this.cdn = cdn;
-  }
+export class AppApi  extends Api {
+	readonly cdn: string;
 
-  fillCatalog(): Promise<IProduct[]> {
-    return this.get<IProductsTotal>("/product/").then((data) => {
-      return data.items.map((item) => ({
-        ...item,
-        image: `${this.cdn}/${item.image.replace('.svg', '.png')}`,
-      }));
-    });
-  }
+	constructor(cdn: string, baseUrl: string, options?: RequestInit) {
+		super(baseUrl, options);
+		this.cdn = cdn;
+	}
 
-  sendOrder(order: IOrder): Promise<IOrderResult> {
-    return this.post<IOrderResult>("/order/", order);
-  }
+	fillCatalogy(): Promise<IProduct[]> {
+		return this.get('/product/')
+			.then((data: IProductsData) => {
+				return data.items.map((item) => ({
+					...item,
+					image: this.cdn + item.image,
+				}));
+			});
+	}
+
+	sendOrder(order: IOrder): Promise<IOrderResult> {
+		return this.post('/order', order)
+			.then((data: IOrderResult)=> {
+				return data;
+			});
+	};
 }

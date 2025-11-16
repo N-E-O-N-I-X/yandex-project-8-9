@@ -1,96 +1,77 @@
-import { Component } from "../base/Component";
-import { IEvents } from "../base/Events";
-import { ensureElement } from "../../utils/utils";
+import { Form } from '../base/Form';
+import { IEvents } from '../base/Events';
+import { ensureElement } from '../../utils/utils';
 
 interface IFormOrder {
-  payment: "card" | "cash" | "";
-  address: string;
+	payment: 'card' | 'cash';
+	address: string;
 }
 
-export class FormOrder extends Component<IFormOrder> {
-  protected cash: HTMLButtonElement;
-  protected card: HTMLButtonElement;
-  protected address: HTMLInputElement;
-  protected button: HTMLButtonElement;
-  protected errorSpan: HTMLSpanElement;
+export class FormOrder extends Form<IFormOrder> {
 
-  public payment: "card" | "cash" | "" = "";
-  public addressValue = "";
+	protected cash: HTMLButtonElement;
+	protected card: HTMLButtonElement;
+	protected address: HTMLInputElement;
+	protected button: HTMLButtonElement;
+	protected errorSpan: HTMLSpanElement;
 
-  constructor(container: HTMLFormElement, protected events: IEvents) {
-    super(container);
+	constructor(container: HTMLFormElement, protected events: IEvents) {
+		super(container, events);
 
-    this.cash = ensureElement<HTMLButtonElement>(
-      'button[name="cash"]',
-      container
-    );
-    this.card = ensureElement<HTMLButtonElement>(
-      'button[name="card"]',
-      container
-    );
-    this.address = ensureElement<HTMLInputElement>(
-      'input[name="address"]',
-      container
-    );
-    this.button = ensureElement<HTMLButtonElement>(".order__button", container);
-    this.errorSpan = ensureElement<HTMLSpanElement>(".form__errors", container);
+		this.form = container;
 
-    // Клик по кнопке "Далее"
-    this.button.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.events.emit("form-order:next");
-    });
+		this.cash = ensureElement<HTMLButtonElement>('button[name="cash"]', container);
+		this.card = ensureElement<HTMLButtonElement>('button[name="card"]', container);
+		this.address = ensureElement<HTMLInputElement>('input[name="address"]', container);
+		this.button = ensureElement<HTMLButtonElement>('.order__button', container);
+		this.errorSpan = ensureElement<HTMLSpanElement>('.form__errors', container);
 
-    // Выбор "При получении"
-    this.cash.addEventListener("click", () => {
-      this.payment = "cash";
-      this.togglePaymentButtons();
-      this.emitChange("payment", "cash");
-    });
+		this.form.addEventListener('input', (e: Event) => {
+			const target = e.target as HTMLInputElement;
+			const field = target.name as keyof IFormOrder;
+			const value = target.value;
+			this.onInputChange(field as keyof IFormOrder, value);
+		});
 
-    // Выбор "Онлайн"
-    this.card.addEventListener("click", () => {
-      this.payment = "card";
-      this.togglePaymentButtons();
-      this.emitChange("payment", "card");
-    });
+		this.button.addEventListener('click', (e) => {
+			e.preventDefault();
+			this.events.emit('form-order:next');
+		});
 
-    // Ввод адреса
-    this.address.addEventListener("input", () => {
-      this.addressValue = this.address.value;
-      this.emitChange("address", this.addressValue);
-      this.updateButtonState();
-    });
-  }
+		this.cash.addEventListener('click', () => {
+			this.events.emit(`${this.form.name}.payment:change`, {
+				field: 'payment',
+				value: 'cash',
+				formType: 'order'
+			});
+			this.isPayMethod = true;
+		});
 
-  protected emitChange(field: keyof IFormOrder, value: string) {
-    const formName = (this.container as HTMLFormElement).name;
-    this.events.emit(`${formName}.${field}:change`, {
-      field,
-      value,
-      formType: "order",
-    });
-    this.updateButtonState();
-  }
+		this.card.addEventListener('click', () => {
+			this.events.emit(`${this.form.name}.payment:change`, {
+				field: 'payment',
+				value: 'card',
+				formType: 'order'
+			});
+			this.isPayMethod = false;
+		});
+	};
 
-  protected togglePaymentButtons() {
-    this.toggleClass(this.cash, "button_alt-active", this.payment === "cash");
-    this.toggleClass(this.card, "button_alt-active", this.payment === "card");
-  }
+	protected onInputChange(field: keyof IFormOrder, value: string) {
+		this.events.emit(`${this.form.name}.${String(field)}:change`, {
+			field,
+			value,
+			formType: 'order'
+		});
+	}
 
-  protected updateButtonState() {
-    const isValid = this.payment !== "" && this.addressValue.trim() !== "";
-    this.button.disabled = !isValid;
-  }
+	protected set isPayMethod(value: boolean) {
+		this.toggleClass(this.cash,'button_alt-active', value )
+		this.toggleClass(this.card,'button_alt-active', !value )
+	}
 
-  // Если надо очистить кнопку позже
-  public clearPayment(): void {
-    this.toggleClass(this.cash, "button_alt-active", false);
-    this.toggleClass(this.card, "button_alt-active", false);
-  }
-
-  public reset(): void {
-    this.address.value = "";
-    this.clearPayment();
-  }
+	clearIsPayMethod() {
+		this.toggleClass(this.cash,'button_alt-active', false)
+		this.toggleClass(this.card,'button_alt-active', false)
+	};
 }
