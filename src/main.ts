@@ -115,6 +115,10 @@ events.on('form-contacts:send-order', () => {
 events.on(/^order\..*:change|^contacts\..*:change/,
 	(data: { field: keyof IUserData; value: string | 'card' | 'cash' | null; formType: 'order' | 'contacts' }) => {
 		userModel.setField(data.field, data.value);
+
+		if (data.field === 'payment' && data.formType === 'order') {
+			formOrder.isPayMethod = data.value === 'cash';
+		}
 	}
 );
 

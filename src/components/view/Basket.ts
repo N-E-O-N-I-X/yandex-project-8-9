@@ -42,8 +42,7 @@ protected events: IEvents;
 	clear() {
 		this.itemList.innerHTML = '';
 	};
-	updateButtonState(value: number) {
+	updateButtonState(value: boolean) {
 		this.setDisabled(this.button, !value);
 	}
-
 }

@@ -44,7 +44,6 @@ export class FormOrder extends Form<IFormOrder> {
 				value: 'cash',
 				formType: 'order'
 			});
-			this.isPayMethod = true;
 		});
 
 		this.card.addEventListener('click', () => {
@@ -53,7 +52,6 @@ export class FormOrder extends Form<IFormOrder> {
 				value: 'card',
 				formType: 'order'
 			});
-			this.isPayMethod = false;
 		});
 	};
 
@@ -65,7 +63,7 @@ export class FormOrder extends Form<IFormOrder> {
 		});
 	}
 
-	protected set isPayMethod(value: boolean) {
+	public set isPayMethod(value: boolean) {
 		this.toggleClass(this.cash,'button_alt-active', value )
 		this.toggleClass(this.card,'button_alt-active', !value )
 	}
